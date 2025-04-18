@@ -37,7 +37,7 @@ resource "aws_security_group" "my_sg" {
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "-1"
+    protocol    = "-1" # all protocols
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
@@ -66,7 +66,10 @@ resource "aws_instance" "my-ec2" {
   user_data = file("install_nginx.sh")  # Corrected file path
 
   root_block_device { # EBS volume
-    volume_size = var.ec2_root_volume_size # variable interpolation
+    #volume_size = var.ec2_root_volume_size # variable interpolation
+    
+    # Using conditional expression
+    volume_size = var.env=="prod" ? 20: var.ec2_default_root_volume_size
     volume_type = "gp3"
     tags={
     Name = "Terraform-EC2"
